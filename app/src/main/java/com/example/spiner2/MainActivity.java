@@ -49,17 +49,20 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter<String> adapter2;
     ArrayAdapter<String> adapter;
     ArrayList<String> keys = new ArrayList<>();
-    Spinner s1 = (Spinner) findViewById(R.id.spinner);
-    Spinner s2 = (Spinner) findViewById(R.id.spinner2);
+    Spinner s1;
+    Spinner s2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        s1 = findViewById(R.id.spinner);
+        s2 = findViewById(R.id.spinner2);
+        List<String[]> csvData = new ArrayList<>();
 
         try {
             InputStream inputStream = this.getResources().openRawResource(R.raw.cities);
             CSVReader csvReader = new CSVReader();
-            List<String[]> csvData = csvReader.readCSV(inputStream);
+            csvData = csvReader.readCSV(inputStream);
 
             for(String[] s : csvData) {
                 //System.out.println(s[0] + "\t" + s[1]);
@@ -83,9 +86,15 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     String key = parent.getItemAtPosition(position).toString();
-                    adapter2 = new ArrayAdapter<String>(s2.getContext(), android.R.layout.simple_spinner_item, liste.get(key));
-                    adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    s2.setAdapter(adapter2);
+                    if (liste.containsKey(key)) {
+                        adapter2 = new ArrayAdapter<String>(s2.getContext(), android.R.layout.simple_spinner_item, liste.get(key));
+                        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        s2.setAdapter(adapter2);
+                    } else {
+                        // Handle the case when the selected key is not found in the HashMap
+                        // For example, you can clear the second spinner's adapter
+                        s2.setAdapter(null);
+                    }
                 }
 
                 @Override
